@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To-do App for Nerds</title>
+
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      #add-todo-section {
+        display: flex;
+      }
+      #todo-list-item {
+        display: flex;
+      }
+    </style>
+  </head>
+  <body>
+    <header></header>
+
+    <main>
+      <section id="dashboard"></section>
+      <section id="todo-section">
+        <section id="add-todo-section">
+          <section id="add-todo-content-wrapper">
+            <input type="text" id="add-todo-content" />
+            <p id="add-todo-content-error"></p>
+          </section>
+
+          <section id="add-todo-time-wrapper">
+            <input type="time" id="add-todo-time" />
+            <p id="add-todo-time-error"></p>
+          </section>
+
+          <button id="add-todo-button">Add</button>
+        </section>
+
+        <section id="todo-list-wrapper">
+          <ul id="todo-list"></ul>
+        </section>
+      </section>
+      <section id="journaling"></section>
+    </main>
+
+    <footer></footer>
+
+    <script>
+      // ******* TODO MODULE *******
+      const todoSectionEl = document.getElementById("todo")
+      const addTodoContentEl = document.getElementById("add-todo-content")
+      const addTodoContentErrorEl = document.getElementById(
+        "add-todo-content-error"
+      )
+      const addTodoTimeEl = document.getElementById("add-todo-time")
+      const addTodoTimeErrorEl = document.getElementById("add-todo-time-error")
+      const addTodoButtonEl = document.getElementById("add-todo-button")
+      const todoListEl = document.getElementById("todo-list")
+
+      class TodoBuilder {
+        content = ""
+        timeString = ""
+        completionTimeString = ""
+        createdDate = new Date()
+
+        setContent(_content = "") {
+          this.content = typeof _content !== "string" ? "" : _content
+          return this
+        }
+        setTimeString(_timeString = "") {
+          this.timeString = typeof _timeString !== "string" ? "" : _timeString
+          return this
+        }
+        setCompletionTimeString(_completionTime = "") {
+          this.completionTimeString =
+            typeof _completionTime !== "string" ? "" : _completionTime
+          return this
+        }
+        build() {
+          return this
+        }
+      }
+
+      function getCheckboxElByTodoId(_todoId = "") {
+        const todoEl = document.getElementById(_todoId)
+        return todoEl.getElementsByTagName("input")[0] || null
+      }
+      function toggleTodoStatus(_todoId = "") {
+        const checkboxEl = getCheckboxElByTodoId(_todoId) || null
+
+        if (!checkboxEl) return
+
+        checkboxEl.checked = !checkboxEl.checked
+
+        console.log(checkboxEl)
+      }
+      function createTodoTextEl(_content = "") {
+        const todoEl = document.createElement("p")
+
+        todoEl.innerText = _content || ""
+
+        return todoEl
+      }
+      function createTodoWrapperEl(_todo) {
+        const todoWrapperEl = document.createElement("li")
+        todoWrapperEl.id = Date.now()
+
+        const todoCheckboxEl = document.createElement("input")
+        todoCheckboxEl.setAttribute("type", "checkbox")
+        todoCheckboxEl.addEventListener("change", () =>
+          toggleTodoStatus(todoWrapperEl.id)
+        )
+        todoWrapperEl.appendChild(todoCheckboxEl)
+
+        const todoTextEl = createTodoTextEl(_todo?.content || "")
+        todoWrapperEl.appendChild(todoTextEl)
+
+        return todoWrapperEl
+      }
+      function appendTodoIntoList(_todo) {
+        const todoWrapperEl = createTodoWrapperEl(_todo)
+
+        // console.log(todoEl)
+        todoListEl.appendChild(todoWrapperEl)
+      }
+      function createTodoObject() {
+        const todo = new TodoBuilder()
+          .setContent(addTodoContentEl?.value || "")
+          .setTimeString(addTodoTimeEl?.value || "")
+          .build()
+
+        return todo
+      }
+      function handleCreateTodo() {
+        const todo = createTodoObject()
+        appendTodoIntoList(todo)
+      }
+      addTodoButtonEl.addEventListener("click", handleCreateTodo)
+    </script>
+  </body>
+</html>
